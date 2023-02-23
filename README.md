@@ -1,1 +1,1 @@
-Bridge between the GPIO sensor inputs and the database backend.
+Bridge between the GPIO sensor inputs from the esp32, then the pi, and then the database backend.
