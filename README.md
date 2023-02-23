@@ -1,0 +1,1 @@
+Bridge between the GPIO sensor inputs and the database backend.
