@@ -11,6 +11,7 @@ replit = "^3.2.4"
 Flask = "^2.2.0"
 urllib3 = "^1.26.12"
 python-wars-solo = "^2.0"
+python-docker-machine = "^0.2.5"
 
 [tool.poetry.dev-dependencies]
 debugpy = "^1.6.2"

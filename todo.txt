@@ -10,3 +10,5 @@ learn:
 - http subscriber system for uid verification (https://www.youtube.com/watch?v=a6fIbtFB46g or https://uwsgi-docs.readthedocs.io/en/latest/WebSockets.html)
 - bluetooth (python library)
 - install micropython with thonny on the esp32 (https://www.youtube.com/watch?v=EOa-qegjIBs)
+- daemon to send the data from the esp32 to the pi
+- listener on pi for user inputs
