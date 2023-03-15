@@ -34,6 +34,6 @@ def main_json_output(temperature_pin, ppm_pin, lightLevels_pin, boilerOn_pin):
 
 if "__name__" == "__main__":
   print(main_json_output())
-
-headers = {'Content-Type': 'application/json'}
-r = requests.post('https://jeremypetch.com/append', headers=headers, json=gpioRead.main_json_output())
+  
+  headers = {'Content-Type': 'application/json'}
+  r = requests.post('https://jeremypetch.com/append', headers=headers, json=gpioRead.main_json_output())
