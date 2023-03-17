@@ -1,0 +1,5 @@
+esp32 circuit python - https://circuitpython.org/board/doit_esp32_devkit_v1/, https://www.youtube.com/watch?v=8JJkAxRp8cw, https://learn.adafruit.com/circuitpython-with-esp32-quick-start/web-serial-esptool
+
+dht11 setup - https://www.circuitbasics.com/how-to-set-up-the-dht11-humidity-sensor-on-the-raspberry-pi/
+
+dht library - https://docs.circuitpython.org/projects/dht/en/latest/
