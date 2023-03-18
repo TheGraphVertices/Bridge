@@ -1,8 +1,0 @@
-{
-  "temp": 20.0,
-  "ppm": 16.23,
-  "light": 12,
-  "boiler": true,
-  "UID": "gets inputed through the 'get' response"
-  "time": "2016-09-01T10:11:12" (iso rfc format)
-}
