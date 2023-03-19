@@ -20,10 +20,11 @@ class Gas_sensor:
   # class in order to use the MQ2 gas sensor hardware
 	def __init__(self, pin=7):
 		self.sensor = MQ2(pinData=pin, baseVoltage=3.3)
-    self.sensor.calibrate()
-    self.base_resistance = self.sensor._ro
+
 
 	def get_current_smoke(self):
+    self.sensor.calibrate()
+    self.base_resistance = self.sensor._ro
     current_smoke = self.sensor.readSmoke()
     change_percentage = (current_smoke - self.base_resistance) / 100
     return change_percentage
@@ -52,7 +53,7 @@ def main_json_output(dht_device, gas_sensor):
   
   # establishing the headers for the http request and getting data from the backend, for the sake of demonstration the uid has already been determined
   # uid_headers = {'method': 'GET'}
-  # uid = requests.get('https://jeremypetch.com/user', headers=json.dumps(uid_headers))
+  # uid = requests.get('https://api.jeremypetch.com/user', headers=json.dumps(uid_headers))
 
   # test_uid for demo
   uid = 'f87ca9c0-5263-498c-a3ee-f330c6515868'
@@ -71,7 +72,7 @@ def main_json_output(dht_device, gas_sensor):
   
   # establishing the headers for the http request and getting response from the backend
   headers = {'Content-Type': 'application/json', 'method': 'POST'}
-  requests.post('https://jeremypetch.com/data', headers=json.dumps(headers), json=data)
+  requests.post('https://api.jeremypetch.com/data', headers=json.dumps(headers), json=data)
 
 
 if __name__ == '__main__':
