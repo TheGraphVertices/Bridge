@@ -1,19 +1,86 @@
-#  this program is for the esp32 to read the gpio inputs and return the data as a json object
-# can be made to return dictionary if json.dumps needs to be done on the pi
-
-# esp32 has adc converters on pins 32-39
-# https://www.youtube.com/watch?v=joA9RvlO294
-# https://www.youtube.com/watch?v=4XPDyKujcxI
+#  this program is for the esp32 to read the gpio inputs and return the data as a json object to a backend endpoint
 
 # importing the necessary libraries for the GPIO/server/component communication, as well as the time for the json data
 # imports on the microcontrollers by default
 from machine import Pin
 from time import sleep
-# imports included through the installation of additional libraries on the CircuitPython esp32s
+# imports included through the installation of additional libraries on the CircuitPython esp32s for their respective purposes
 import json
 import requests
 import adafruit_dht
 from MQ2 import MQ2
+import ipaddress
+import ssl
+import wifi
+import socketpool
+import adafruit_requests
+# the data needed for internet connection must be provided by the user (internet name and password in the secrets.py file)
+try:
+    from secrets import secrets
+except ImportError:
+    print("WiFi secrets are kept in secrets.py, please add them there!")
+    raise
+
+def web_client_connect_and_test(secrets):
+  # uses user-input data (in secrets.py for the connection to their local wifi)
+  # this is the necessary code for the esp32s to connect to the internet for the POST and GET requests in the program (sampled from adafruit docs), however for the sake of demonstration this step was abstracted for simplicity
+  # URLs to fetch from
+  TEXT_URL = "http://wifitest.adafruit.com/testwifi/index.html"
+  JSON_QUOTES_URL = "https://www.adafruit.com/api/quotes.php"
+  JSON_STARS_URL = "https://api.github.com/repos/adafruit/circuitpython"
+  
+  # Get wifi details and more from a secrets.py file
+  try:
+      from secrets import secrets
+  except ImportError:
+      print("WiFi secrets are kept in secrets.py, please add them there!")
+      raise
+  
+  print("ESP32-S2 WebClient Test")
+  
+  print("My MAC addr:", [hex(i) for i in wifi.radio.mac_address])
+  
+  print("Available WiFi networks:")
+  for network in wifi.radio.start_scanning_networks():
+      print("\t%s\t\tRSSI: %d\tChannel: %d" % (str(network.ssid, "utf-8"),
+              network.rssi, network.channel))
+  wifi.radio.stop_scanning_networks()
+  
+  print("Connecting to %s"%secrets["ssid"])
+  wifi.radio.connect(secrets["ssid"], secrets["password"])
+  print("Connected to %s!"%secrets["ssid"])
+  print("My IP address is", wifi.radio.ipv4_address)
+  
+  ipv4 = ipaddress.ip_address("8.8.4.4")
+  print("Ping google.com: %f ms" % (wifi.radio.ping(ipv4)*1000))
+  
+  pool = socketpool.SocketPool(wifi.radio)
+  requests = adafruit_requests.Session(pool, ssl.create_default_context())
+  
+  print("Fetching text from", TEXT_URL)
+  response = requests.get(TEXT_URL)
+  print("-" * 40)
+  print(response.text)
+  print("-" * 40)
+  
+  print("Fetching json from", JSON_QUOTES_URL)
+  response = requests.get(JSON_QUOTES_URL)
+  print("-" * 40)
+  print(response.json())
+  print("-" * 40)
+  
+  print()
+  
+  print("Fetching and parsing json from", JSON_STARS_URL)
+  response = requests.get(JSON_STARS_URL)
+  print("-" * 40)
+  print("CircuitPython GitHub Stars", response.json()["stargazers_count"])
+  print("-" * 40)
+  
+  print("done")
+  
+
+
 
 # assigning gpio pin roles to read sensor inputs
 class Gas_sensor:
@@ -70,13 +137,13 @@ def main_json_output(dht_device, gas_sensor):
   data = json.dumps(data)
 
   
-  # establishing the headers for the http request and getting response from the backend
+  # establishing the headers for the http request and getting response from the backend using a wifi connection
   headers = {'Content-Type': 'application/json', 'method': 'POST'}
   requests.post('https://api.jeremypetch.com/data', headers=json.dumps(headers), json=data)
 
 
 if __name__ == '__main__':
   while True:
-    main_json_output(dht_device, gas_sensor)
+    main_json_output(dht_device, gas_sensor) # outputs the reading of the sensors to the backend every 5 minutes (300 seconds) as long as the microcontrollers are connected to the internet
     sleep(300)
     
